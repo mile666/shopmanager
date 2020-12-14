@@ -8,7 +8,7 @@
       <el-form-item label="密码">
         <el-input v-model="formdata.password"></el-input>
       </el-form-item>
-      <el-button class="login-btn" type="primary">登录</el-button>
+      <el-button @click.prevent="handlelogin()" class="login-btn" type="primary">登录</el-button>
     </el-form>
   </div>
 </template>
@@ -22,10 +22,53 @@ export default {
         password: ''
       }
     }
+  },
+  methods: {
+    // 发起登录请求
+    handlelogin () {
+      this.$http
+        .post(`login`, this.formdata)
+        .then((res) => {
+          // console.log(res)
+          const {
+            data: {
+              data,
+              meta: {msg, status}
+            }
+          } = res
+          // // 解析把后面name的值abc赋值给前面name的newname
+          // const {name: newname} = {name:'abc'}
+          // // 所以只可以使用newname
+          // console.log(newname)
+          if (status === 200) {
+            console.log('login---success')
+          } else {
+            console.log('login---errr')
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
   }
 }
 </script>
 
 <style>
-
+  .login-wrap{
+    height: 100%;
+    background-color: #324152;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .login-form {
+    background-color: #fff;
+    width:400px;
+    border-radius: 5px;
+    padding: 30px;
+  }
+  .login-btn{
+    width: 100%;
+  }
 </style>
