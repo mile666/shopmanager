@@ -25,10 +25,34 @@ export default {
   },
   methods: {
     // 发起登录请求
-    handlelogin () {
-      this.$http
-        .post(`login`, this.formdata)
-        .then((res) => {
+    async handlelogin () {
+      // 目前代码：异步的结果res在一个函数里面获取的
+      // 目的：res的获取是同步的
+      const res = await this.$http.post(`login`, this.formdata)
+      // console.log(res)
+      const {
+        data: {
+          data: {token},
+          meta: {msg, status}
+        }
+      } = res
+
+      if (status === 200) {
+        // console.log('login---success')
+        // 提示：token值目前不需要关心，将来要用，把token永久存储
+        // session/cookie/localStorage(Html5新特性)
+        // localStorage.setItem(key名:要存储的数据 )
+        localStorage.setItem('token', token)
+        // 渲染home.vue <- 改标识/ <- js代码编程导航$router
+        this.$router.push({
+          name: 'home'
+        })
+      } else {
+        // 用户名/密码错误
+        this.$message.error(msg)
+      }
+      /**
+          .then((res) => {
           // console.log(res)
           const {
             data: {
@@ -36,19 +60,23 @@ export default {
               meta: {msg, status}
             }
           } = res
-          // // 解析把后面name的值abc赋值给前面name的newname
-          // const {name: newname} = {name:'abc'}
-          // // 所以只可以使用newname
-          // console.log(newname)
           if (status === 200) {
             console.log('login---success')
+            // 渲染home.vue <- 改标识/ <- js代码编程导航$router
+            this.$router.push({
+              name: 'home'
+            })
           } else {
-            console.log('login---errr')
+            // 用户名/密码错误
+            // console.log('login---errr')
+            // console.log(msg)
+            this.$message.error(msg)
           }
         })
         .catch(err => {
           console.log(err)
         })
+         */
     }
   }
 }
