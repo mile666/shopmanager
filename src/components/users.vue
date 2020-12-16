@@ -58,8 +58,32 @@
           {{ list.row.create_time | fmtdate}}
         </template>
       </el-table-column>
-      <el-table-column prop="date" label="用户状态" width="120"></el-table-column>
-      <el-table-column prop="date" label="操作" width="200"></el-table-column>
+      <!-- 前提：单元格内容是一个组件，不是prop的值 -->
+      <!-- 处理：
+      1.将el-table-column标签中的prop=""属性删除
+      2.在el-table-column标签中添加template标签
+      3.在template标签中添加slot-scope="scope"
+        在element-ui中switch开关的基本用法的代码将el-switch标签放在template标签里
+      -->
+      <el-table-column label="用户状态" width="120">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        </template>
+      </el-table-column>
+      <!-- 
+        步骤：
+          1.将el-table-column标签中的prop的属性删除(单元格内容是一个组件)
+          2.添加template标签，并给template标签添加 slot-scope="scope"
+          3.element-ui的button按钮的基本用法代码的最后的代码的一段el-button复制到template标签中，保留type的属性为primary、danger、success值的标签
+          4.调节按钮大小和 颜色：给3个el-button标签添加属性size="mini"和plain
+      -->
+      <el-table-column label="操作" width="200">
+        <template slot-scope="scope">
+          <el-button type="primary" icon="el-icon-edit" circle size="mini" plain></el-button>
+          <el-button type="danger" icon="el-icon-delete" circle size="mini" plain></el-button>
+          <el-button type="success" icon="el-icon-check" circle size="mini" plain></el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!-- 分页 -->
   </el-card>
