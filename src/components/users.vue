@@ -10,8 +10,9 @@
     <!-- 搜索框 -->
     <el-row class="searchBox">
       <el-col>
-        <el-input class="searchInput" placeholder="请输入内容" v-model="query">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input @clear="getAllUsers()" clearable class="searchInput" placeholder="请输入内容" v-model="query">
+          <el-button @click="searchUser()" slot="append" icon="el-icon-search"></el-button>
+          <!-- <el-button slot="append" icon="el-icon-search"></el-button> -->
         </el-input>
         <el-button type="primary">添加按钮</el-button>
       </el-col>
@@ -120,6 +121,18 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 清空时获取所有用户
+    getAllUsers () {
+      // 此时 query 查询参数已经是''
+      this.getTableData()
+    },
+    // 搜索用户
+    searchUser () {
+      // 输入框组件 -> 在组件文本清空时 -> 做一些事儿
+      // query 数据默认''
+      this.pagenum = 1
+      this.getTableData()
+    },
     // 分页相关的方法
     // 每页2条 -> 每页4条 -> 按照4条发送请求
     handleSizeChange (val) {
@@ -150,10 +163,10 @@ export default {
       // 设置发送请求时的请求头 -> axios库 -> 找axios中有没有可以设置headers头部的API -> 看axios文档
       // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
       const AUTH_TOKEN = localStorage.getItem('token')
-      console.log(AUTH_TOKEN)
+      // console.log(AUTH_TOKEN)
       this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
       const res = await this.$http.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
-      console.log(res)
+      // console.log(res)
       const {data, meta: {msg, status}} = res.data
       if (status === 200) {
         this.total = data.total
