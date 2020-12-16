@@ -70,7 +70,7 @@
           <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </template>
       </el-table-column>
-      <!-- 
+      <!--
         步骤：
           1.将el-table-column标签中的prop的属性删除(单元格内容是一个组件)
           2.添加template标签，并给template标签添加 slot-scope="scope"
@@ -86,6 +86,15 @@
       </el-table-column>
     </el-table>
     <!-- 分页 -->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-sizes="[2, 4, 6, 8]"
+      :page-size="2"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
   </el-card>
 </template>
 
@@ -97,7 +106,11 @@ export default {
       query: '',
       // 分页功能 -> 前提接口必须支持分页->通常在接口url参数中类似page的参数名
       pagenum: 1,
-      pagesize: 10,
+      pagesize: 2,
+      total: -1,
+      // 15条 每页条数pagesize=2 -> 8页
+      // 1-2 3-4 5-6 ...
+      // pagenum
       // 表格数据
       list: []
     }
@@ -107,6 +120,21 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 分页相关的方法
+    // 每页2条 -> 每页4条 -> 按照4条发送请求
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+      this.pagenum = 1
+      this.pagesize = val
+      this.getTableData()
+    },
+    // 当前1页 -> 点击2页 -> 获取第二页数据
+    handleCurrentChange (val) {
+      console.log(`当前页: ${val}`)
+      // 根据新页码发送请求
+      this.pagenum = val
+      this.getTableData()
+    },
     async getTableData () {
       // this.$http
       // 模板字符串`${}`
@@ -128,8 +156,9 @@ export default {
       console.log(res)
       const {data, meta: {msg, status}} = res.data
       if (status === 200) {
+        this.total = data.total
         this.list = data.users
-        console.log(this.list)
+        // console.log(this.list)
       }
     }
   }
