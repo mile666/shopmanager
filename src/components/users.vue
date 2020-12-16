@@ -14,7 +14,7 @@
           <el-button @click="searchUser()" slot="append" icon="el-icon-search"></el-button>
           <!-- <el-button slot="append" icon="el-icon-search"></el-button> -->
         </el-input>
-        <el-button type="primary">添加按钮</el-button>
+        <el-button type="primary" @click="showDiaAddUser()">添加用户</el-button>
       </el-col>
     </el-row>
     <!-- 表格 -->
@@ -96,6 +96,27 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <!-- 对话框 - 添加用户对话框 -->
+    <el-dialog title="收货地址" :visible.sync="dialogFormVisibleAdd">
+      <el-form label-position="left" label-width="80px" :model="formdata">
+        <el-form-item label="用户名">
+          <el-input v-model="formdata.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="formdata.password"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="formdata.email"></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="formdata.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisibleAdd = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -113,7 +134,17 @@ export default {
       // 1-2 3-4 5-6 ...
       // pagenum
       // 表格数据
-      list: []
+      list: [],
+      // 对话框
+      dialogFormVisibleAdd: false,
+      // 添加表单数据
+      formdata: {
+        // username、password、email、mobile
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      }
     }
   },
   // 获取首屏数据写在created中，也可以写在mounted中
@@ -121,6 +152,10 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 添加用户 - 显示对话框
+    showDiaAddUser () {
+      this.dialogFormVisibleAdd = true
+    },
     // 清空时获取所有用户
     getAllUsers () {
       // 此时 query 查询参数已经是''
