@@ -80,7 +80,7 @@
       -->
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" circle size="mini" plain></el-button>
+          <el-button @click="showDiaEditUser(scope.row)" type="primary" icon="el-icon-edit" circle size="mini" plain></el-button>
           <el-button @click="showMsgBox(scope.row)" type="danger" icon="el-icon-delete" circle size="mini" plain></el-button>
           <el-button type="success" icon="el-icon-check" circle size="mini" plain></el-button>
         </template>
@@ -97,7 +97,7 @@
       :total="total">
     </el-pagination>
     <!-- 对话框 - 添加用户对话框 -->
-    <el-dialog title="收货地址" :visible.sync="dialogFormVisibleAdd">
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
       <el-form label-position="left" label-width="80px" :model="formdata">
         <el-form-item label="用户名">
           <el-input v-model="formdata.username"></el-input>
@@ -115,6 +115,24 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
         <el-button type="primary" @click="addUser()">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 对话框 - 编辑用户对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
+      <el-form label-position="left" label-width="80px" :model="formdata">
+        <el-form-item label="用户名">
+          <el-input disabled v-model="formdata.username"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="formdata.email"></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="formdata.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+        <el-button type="primary" @click="editUser()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -137,6 +155,7 @@ export default {
       list: [],
       // 对话框
       dialogFormVisibleAdd: false,
+      dialogFormVisibleEdit: false,
       // 添加表单数据
       formdata: {
         // username、password、email、mobile
@@ -152,6 +171,28 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 编辑 - 发送请求
+    async editUser () {
+      // 发送请求
+      // id -> 当前用户id -> 数据 -> 1.data中没有 2.方法没有合适的实参
+      // 使用this.formdata 必须保证数据有值
+      const res = await this.$http.put(`users/${this.formdata.id}`, this.formdata)
+      // console.log(res)
+      const {meta: {msg, status}} = res.data
+      if (status === 200) {
+        // 关闭对话框
+        this.dialogFormVisibleEdit = false
+        // 更新表格
+        this.getTableData()
+      }
+    },
+    // 编辑 - 显示对话框
+    showDiaEditUser (user) {
+      // this.formdata = 要前3个值
+      this.formdata = user
+      // 编辑对话框-显示
+      this.dialogFormVisibleEdit = true
+    },
     // 删除 - 弹出确认框 confirm
     async showMsgBox (user) {
       this.$confirm('是否删除用户?', '提示', {
@@ -208,14 +249,14 @@ export default {
     // 分页相关的方法
     // 每页2条 -> 每页4条 -> 按照4条发送请求
     handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+      // console.log(`每页 ${val} 条`)
       this.pagenum = 1
       this.pagesize = val
       this.getTableData()
     },
     // 当前1页 -> 点击2页 -> 获取第二页数据
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+      // console.log(`当前页: ${val}`)
       // 根据新页码发送请求
       this.pagenum = val
       this.getTableData()
