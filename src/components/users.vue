@@ -150,18 +150,22 @@
           <!-- 特性
             1.默认显示请选择 : 当v-model绑定的值和option的value值一样 -> 显示label的值
             2.当通过页面操作 -> 当选中某个label，此时，v-model绑定的数据值 = 被选中的label的value值
+            目的：不希望显示请选择 -> 希望显示对应的角色，比如主管->label->需要控制value
+            角色[30,31,34,39,40]
+            希望显示的是主管(30) -> label主管 -> value等于30
           -->
           {{selectVal}}
           <el-select v-model="selectVal" placeholder="请选择角色名称">
             <el-option label="请选择" :value="-1"></el-option>
             <!-- 其余5个option是动态生成的 v-for -->
+            <!-- 角色[30,31,34,39,40] -->
             <el-option :label="item.roleName" :value="item.id" v-for="(item, i) in roles" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisibleRole = false">确 定</el-button>
+        <el-button type="primary" @click="setRole()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -197,7 +201,9 @@ export default {
       // 下拉框使用的数据
       selectVal: -1,
       // 保存角色的数据
-      roles: []
+      roles: [],
+      // 要的是用户的id <- 要用户 <-
+      currUserId: -1
     }
   },
   // 获取首屏数据写在created中，也可以写在mounted中
@@ -205,8 +211,26 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 分配角色 - 发送请求
+    async setRole () {
+      // 发送请求
+      // users/:id/role
+      const res = await this.$http.put(`users/${this.currUserId}/role`, {
+        // rid角色id
+        rid: this.selectVal
+      })
+      // console.log(res)
+      const {meta: {msg, status}, data} = res.data
+      if (status === 200) {
+        // 关闭对话框
+        this.dialogFormVisibleRole = false
+        this.$message.success(msg)
+      }
+    },
     // 分配角色 - 显示对话框
     async showDiaSetRole (user) {
+      // console.log(user)
+      this.currUserId = user.id
       this.formdata = user
       this.dialogFormVisibleRole = true
       // 获取所有角色名称(5个)
@@ -215,8 +239,18 @@ export default {
       const {meta: {msg, status}, data} = res.data
       if (status === 200) {
         this.roles = data
-        console.log(this.roles)
+        // console.log(this.roles)
       }
+      // 获取当前用户的角色id
+      const res2 = await this.$http.get(`users/${user.id}`)
+      // console.log(res2)
+      // const {meta: {msg2, status2}, data2} = res2.data
+      // if (status2 === 200){
+      //   this.selectVal = data2.rid
+      // }
+      // 所有角色5个[每个角色有自己的id]
+      // 用户信息中也有rid  角色rid
+      this.selectVal = res2.data.data.rid
     },
     // 修改用户状态
     async changeState (user) {
@@ -224,7 +258,7 @@ export default {
       // uid -> 用户id
       // type -> 用户状态
       const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`)
-      console.log(res)
+      // console.log(res)
       const {meta: {status, msg}} = res.data
       if (status === 200) {
         this.$message.success(msg)
