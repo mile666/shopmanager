@@ -327,6 +327,13 @@ export default {
       // 更新表格
       this.getTableData()
     },
+    // 添加用户 - 显示对话框
+    showDiaAddUser () {
+      // 清空
+      // this.formdata.username = "";
+      this.formdata = {}
+      this.dialogFormVisibleAdd = true
+    },
     // 清空时获取所有用户
     getAllUsers () {
       // 此时 query 查询参数已经是''
@@ -375,6 +382,7 @@ export default {
       // console.log(res)
       const {data, meta: {msg, status}} = res.data
       if (status === 200) {
+        console.log('请求发起----')
         this.total = data.total
         this.list = data.users
         // console.log(this.list)

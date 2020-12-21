@@ -41,13 +41,14 @@ export default {
       // // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
       // const AUTH_TOKEN = localStorage.getItem('token')
       // this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-      const res = await this.$http.get(`rights/list`)  
-      console.log(res)
+      const res = await this.$http.get(`rights/list`)
+      // console.log(res)
       const {meta: {status, msg}, data} = res.data
-      if (status === 200){
+      if (status === 200) {
+        console.log('请求发起----')
         this.list = data
       }
-    },
+    }
   }
 }
 </script>

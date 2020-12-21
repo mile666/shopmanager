@@ -3,7 +3,7 @@
     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
     <el-breadcrumb-item>{{level1}}</el-breadcrumb-item>
     <el-breadcrumb-item>{{level2}}</el-breadcrumb-item>
-  </el-breadcrumb> 
+  </el-breadcrumb>
 </template>
 
 <script>
@@ -12,7 +12,7 @@
 // 2.把变化的量当成函数的形参
 export default {
   name: 'cusBread',
-  data(){
+  data () {
     return {
       // level1: '权限管理',
       // level2: '权限列表'
@@ -26,7 +26,7 @@ export default {
   // 4.props特点值来源于外部，声明了level1和level2
   // 5.level1和level2就是将来用组件时的标签属性 <自定义标签 level1="">
   // 6.level1和level2在使用组件时 赋值
-  props: ["level1", "level2"]
+  props: ['level1', 'level2']
 }
 </script>
 

@@ -11,7 +11,6 @@ import moment from 'moment'
 
 import HttpServer from './components/http'
 
-
 // Vue插件的使用
 // ElementUI其实Vue组件，和VueRouter用法一样 Vue.use(名字)
 Vue.use(ElementUI)
