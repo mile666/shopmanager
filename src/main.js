@@ -7,14 +7,15 @@ import '@/assets/css/base.css'
 import App from './App'
 import CusBread from './components/cusBread.vue'
 import router from './router'
-import axios from 'axios'
 import moment from 'moment'
-axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
-Vue.prototype.$http = axios
+
+import HttpServer from './components/http'
+
 
 // Vue插件的使用
 // ElementUI其实Vue组件，和VueRouter用法一样 Vue.use(名字)
 Vue.use(ElementUI)
+Vue.use(HttpServer)
 
 Vue.config.productionTip = false
 
